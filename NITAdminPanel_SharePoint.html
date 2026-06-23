@@ -2549,7 +2549,7 @@
       <div class="tab" onclick="switchTab('history')"    id="tab-history"><i class="fas fa-user-clock"></i> Deactivated History</div>
       <div class="tab" onclick="switchTab('reports')"    id="tab-reports"><i class="fas fa-file-export"></i> Reports</div>
       <div class="tab" onclick="switchTab('bulk')"       id="tab-bulk"><i class="fas fa-file-upload"></i> Bulk Upload</div>
-      <div class="tab" onclick="switchTab('tools')"      id="tab-tools"><i class="fas fa-wrench"></i> IT Tools</div>
+      <div class="tab" onclick="switchTab('tools')"      id="tab-tools"><i class="fas fa-wrench"></i> IT Tools <span id="pwdResetBadge" style="display:none;background:#ef4444;color:#fff;border-radius:10px;font-size:0.65rem;font-weight:700;padding:1px 6px;margin-left:4px;vertical-align:middle;"></span></div>
       <div class="tab" onclick="switchTab('verify')"     id="tab-verify"><i class="fas fa-shield-halved"></i> Verify Document</div>
       <div class="sidebar-footer">
         <b>Godavari Urban</b><br>
@@ -3063,62 +3063,30 @@ Fill the form on the left to preview the registration email that will be sent to
       <div class="section-title">IT Tools <span>Utilities for managing the Internal Branch Document Authorization Tool system</span></div>
     </div>
 
-    <!-- ── CATEGORY LABEL: UTILITIES ── -->
+    <!-- ── CATEGORY LABEL: PASSWORD RESET REQUESTS (TOP) ── -->
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-      <div style="width:4px;height:22px;background:linear-gradient(180deg,var(--accent),#0ea5e9);border-radius:3px;"></div>
-      <span style="font-size:0.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:2px;">🔧 Utilities</span>
+      <div style="width:4px;height:22px;background:linear-gradient(180deg,#0ea5e9,#6366f1);border-radius:3px;"></div>
+      <span style="font-size:0.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:2px;">🔑 Branch Password Reset Requests</span>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;">
-
-      <!-- SHA-256 Hash Generator -->
-      <div class="card" style="border-top:3px solid var(--accent);">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-          <div style="width:36px;height:36px;border-radius:10px;background:rgba(37,99,235,0.12);display:grid;place-items:center;flex-shrink:0;">
-            <i class="fas fa-hashtag" style="color:var(--accent);font-size:0.95rem;"></i>
+    <div class="card" style="border-top:3px solid #0ea5e9; margin-bottom:28px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;border-radius:10px;background:rgba(14,165,233,0.12);display:grid;place-items:center;flex-shrink:0;">
+            <i class="fas fa-key" style="color:#0ea5e9;font-size:0.95rem;"></i>
           </div>
           <div>
-            <div style="font-weight:700;font-size:0.92rem;color:var(--white);">SHA-256 Hash Generator</div>
-            <div style="font-size:0.73rem;color:var(--muted);">Generate hashes for keys or passwords</div>
+            <div style="font-weight:700;font-size:0.92rem;color:var(--white);">Password Reset Requests</div>
+            <div style="font-size:0.73rem;color:var(--muted);">Requests submitted from the Branch Authorization Tool</div>
           </div>
         </div>
-        <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
-        <div class="form-group" style="margin-bottom:10px;">
-          <label>Plain Text to Hash</label>
-          <div class="hash-row">
-            <input type="text" id="hashInput" placeholder="e.g. GodavariNANDED@123" style="flex:1;padding:11px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.9rem;font-family:'IBM Plex Sans',sans-serif;">
-            <button class="btn btn-primary" onclick="generateHash()"><i class="fas fa-cog"></i> Hash It</button>
-          </div>
-        </div>
-        <div class="hash-result" id="hashResult"></div>
+        <button class="btn btn-primary" style="padding:9px 16px;font-size:0.82rem;" onclick="loadPwdResetRequests()">
+          <i class="fas fa-rotate"></i> Refresh
+        </button>
       </div>
-
-      <!-- Admin Access Management -->
-      <div class="card" style="border-top:3px solid var(--yellow);">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-          <div style="width:36px;height:36px;border-radius:10px;background:rgba(217,119,6,0.12);display:grid;place-items:center;flex-shrink:0;">
-            <i class="fas fa-user-shield" style="color:var(--yellow);font-size:0.95rem;"></i>
-          </div>
-          <div>
-            <div style="font-weight:700;font-size:0.92rem;color:var(--white);">Admin Access</div>
-            <div style="font-size:0.73rem;color:var(--muted);">Who can sign in to this panel</div>
-          </div>
-        </div>
-        <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
-        <p style="font-size:0.8rem;color:var(--text);line-height:1.6;">
-          Access to this IT Admin Panel is controlled by Microsoft 365 sign-in.
-          Only accounts whose email address is listed in the
-          <strong>GU_Admins</strong> SharePoint list (column: <strong>Email</strong>)
-          can log in.
-        </p>
-        <p style="font-size:0.72rem;color:var(--muted);margin-top:10px;line-height:1.5;">
-          <i class="fas fa-info-circle"></i> To add or remove an admin, edit the
-          <strong>GU_Admins</strong> list directly in SharePoint — add or remove
-          rows with the admin's Microsoft 365 email address in the
-          <strong>Email</strong> column.
-        </p>
+      <div id="pwdResetList" style="font-size:0.85rem;color:var(--muted);">
+        <div style="text-align:center;padding:24px;color:var(--muted);"><i class="fas fa-spinner fa-spin"></i> Loading requests...</div>
       </div>
-
     </div>
 
     <!-- ── CATEGORY LABEL: BRANCH OPERATIONS ── -->
@@ -3224,32 +3192,6 @@ Fill the form on the left to preview the registration email that will be sent to
         <button class="btn" style="width:100%;background:#8b5cf6;color:#fff;" onclick="transferManager()"><i class="fas fa-right-left"></i> Transfer Manager</button>
       </div>
 
-    </div>
-
-    <!-- ── CATEGORY LABEL: PASSWORD RESET REQUESTS ── -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-      <div style="width:4px;height:22px;background:linear-gradient(180deg,#0ea5e9,#6366f1);border-radius:3px;"></div>
-      <span style="font-size:0.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:2px;">🔑 Branch Password Reset Requests</span>
-    </div>
-
-    <div class="card" style="border-top:3px solid #0ea5e9; margin-bottom:28px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:36px;height:36px;border-radius:10px;background:rgba(14,165,233,0.12);display:grid;place-items:center;flex-shrink:0;">
-            <i class="fas fa-key" style="color:#0ea5e9;font-size:0.95rem;"></i>
-          </div>
-          <div>
-            <div style="font-weight:700;font-size:0.92rem;color:var(--white);">Password Reset Requests</div>
-            <div style="font-size:0.73rem;color:var(--muted);">Requests submitted from the Branch Authorization Tool</div>
-          </div>
-        </div>
-        <button class="btn btn-primary" style="padding:9px 16px;font-size:0.82rem;" onclick="loadPwdResetRequests()">
-          <i class="fas fa-rotate"></i> Refresh
-        </button>
-      </div>
-      <div id="pwdResetList" style="font-size:0.85rem;color:var(--muted);">
-        <div style="text-align:center;padding:24px;color:var(--muted);"><i class="fas fa-spinner fa-spin"></i> Loading requests...</div>
-      </div>
     </div>
 
     <!-- ── CATEGORY LABEL: CRITICAL ACTIONS ── -->
@@ -4299,6 +4241,7 @@ function startAutoRefresh() {
     autoRefreshTimer = setInterval(() => {
         if (!sessionStorage.getItem("adminHash") || dataLoadPromise) return;
         loadAllData(true);
+        loadPwdResetRequests(); // keep badge count current
     }, AUTO_REFRESH_MS);
 }
 
@@ -4380,18 +4323,46 @@ async function loadPwdResetRequests() {
     container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
     try {
         const items = await spReadAll("GU_PwdResetRequests");
-        const pending = items.filter(i => (i.Status || i.Title2 || "").toString().toUpperCase() !== "DONE");
+        const pending = items.filter(i => (i.Status || "").toString().toUpperCase() !== "DONE");
+
+        // Update sidebar notification badge
+        const badge = document.getElementById("pwdResetBadge");
+        if (badge) {
+            if (pending.length > 0) {
+                badge.textContent = pending.length;
+                badge.style.display = "inline";
+            } else {
+                badge.style.display = "none";
+            }
+        }
+
         if (!pending.length) {
             container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--muted);"><i class="fas fa-check-circle" style="color:var(--green);font-size:1.3rem;"></i><br><br>No pending password reset requests.</div>';
             return;
         }
+
         container.innerHTML = pending.map(req => {
-            const empId     = req.EmpID     || req.Title  || "—";
-            const empName   = req.EmpName   || "—";
-            const branch    = req.Branch    || "—";
-            const reason    = req.Reason    || "No reason provided";
-            const reqAt     = req.RequestedAt ? new Date(req.RequestedAt).toLocaleString("en-IN") : "—";
-            const spId      = req._spId;
+            // EmpID is stored in Title field; EmpName and Branch may be blank if submitted pre-login
+            const empId = req.EmpID || req.Title || "—";
+
+            // Try to resolve EmpName and Branch from allBranches cache using EmpID
+            let empName = req.EmpName || "";
+            let branch  = req.Branch  || "";
+            if ((!empName || empName === "—") && empId !== "—" && Array.isArray(allBranches)) {
+                const found = allBranches.find(b => b.EmpID === empId);
+                if (found) {
+                    empName = found.EmpName || found.ManagerName || empName;
+                    branch  = branch || found.Branch || "";
+                }
+            }
+            empName = empName || "—";
+            branch  = branch  || "—";
+
+            const reason = req.Reason || "No reason provided";
+            const reqAt  = req.RequestedAt ? new Date(req.RequestedAt).toLocaleString("en-IN") : "—";
+            const spId   = req._spId;
+            const safeBranch = branch.replace(/'/g, "\\'");
+            const safeEmpId  = empId.replace(/'/g, "\\'");
             return `
             <div style="border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;background:var(--surface2);">
               <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
@@ -4411,7 +4382,7 @@ async function loadPwdResetRequests() {
                 </div>
                 <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0;">
                   <button class="btn btn-danger" style="font-size:0.8rem;padding:9px 14px;"
-                    onclick="processPwdReset('${spId}', '${branch.replace(/'/g,"\\'")}', '${empId}', this)">
+                    onclick="processPwdReset('${spId}', '${safeBranch}', '${safeEmpId}', this)">
                     <i class="fas fa-redo"></i> Reset Login
                   </button>
                   <button class="btn btn-outline" style="font-size:0.8rem;padding:9px 14px;"
@@ -4545,6 +4516,7 @@ async function doAdminLogin() {
         applyBranchesResponse(dataRes);
         startAdminSessionTimer();
         startAutoRefresh();
+        loadPwdResetRequests(); // populate badge immediately after login
 
     } catch(e) {
         errEl.innerText = "Error: " + (e.message || "Login failed. Check popup blockers.");
