@@ -384,7 +384,11 @@
                 <i class="fas fa-exclamation-circle"></i> <span id="passwordErrorMsg"></span>
             </div>
             <div style="text-align:right; margin-top:8px;">
-                <span style="color:#64748b; font-size:0.72rem;">Forgot password? Contact IT Department.</span>
+                <span style="color:#64748b; font-size:0.72rem;">
+                    Forgot password?
+                    <a href="#" onclick="openForgotPasswordModal(); return false;"
+                       style="color:#93c5fd; text-decoration:underline; cursor:pointer;">Request Reset</a>
+                </span>
             </div>
         </div>
 
@@ -427,6 +431,39 @@
         </div>
         <div class="it-note">
             <i class="fas fa-info-circle"></i> Contact IT Admin Department for password resets.
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     FORGOT PASSWORD MODAL
+═══════════════════════════════════════════ -->
+<div id="forgotPwdModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:30000; justify-content:center; align-items:center;">
+    <div style="background:#1e293b; border:1px solid #334155; border-radius:16px; padding:32px; width:90%; max-width:440px; color:#fff; position:relative;">
+        <button onclick="closeForgotPasswordModal()" style="position:absolute;top:14px;right:14px;background:#334155;border:none;color:#94a3b8;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:0.85rem;">✕</button>
+        <div style="text-align:center; margin-bottom:20px;">
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(59,130,246,0.15);display:inline-flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:10px;">🔑</div>
+            <div style="font-weight:700;font-size:1.05rem;">Password Reset Request</div>
+            <div style="color:#94a3b8;font-size:0.8rem;margin-top:4px;">Explain the reason — IT will reset your login</div>
+        </div>
+        <div id="forgotPwdContent">
+            <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:0.78rem;font-family:monospace;color:#93c5fd;" id="forgotPwdEmpDisplay">Employee: —</div>
+            <label style="color:#94a3b8;font-size:0.75rem;font-weight:600;display:block;margin-bottom:6px;letter-spacing:0.05em;">REASON / EXPLANATION *</label>
+            <textarea id="forgotPwdReason" placeholder="e.g. I forgot my password after returning from leave. Please reset my login." rows="4"
+                style="width:100%;padding:12px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:0.9rem;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;"
+                onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#334155'"></textarea>
+            <div id="forgotPwdError" style="color:#f87171;font-size:0.78rem;margin-top:6px;display:none;"></div>
+            <button onclick="submitForgotPasswordRequest()"
+                style="width:100%;margin-top:16px;padding:13px;border-radius:10px;border:none;cursor:pointer;background:#1e3a8a;color:#fff;font-size:0.95rem;font-weight:600;transition:background 0.2s;"
+                onmouseover="this.style.background='#172554'" onmouseout="this.style.background='#1e3a8a'">
+                <i class="fas fa-paper-plane"></i> Submit Reset Request
+            </button>
+        </div>
+        <div id="forgotPwdSuccess" style="display:none;text-align:center;padding:10px 0;">
+            <div style="font-size:2rem;margin-bottom:10px;">✅</div>
+            <div style="font-weight:700;margin-bottom:6px;">Request Submitted!</div>
+            <div style="color:#94a3b8;font-size:0.85rem;line-height:1.6;">Your password reset request has been sent to the IT Department. They will process it shortly.</div>
+            <button onclick="closeForgotPasswordModal()" style="margin-top:18px;padding:11px 28px;border-radius:8px;border:none;cursor:pointer;background:#059669;color:#fff;font-weight:600;">Close</button>
         </div>
     </div>
 </div>
@@ -916,12 +953,24 @@ const _SP_WRITE_MAP_SIGNEDDOCS = {
     "EventID": "Title"
 };
 
+// GU_PwdResetRequests: new list for password reset requests from branch tool.
+// EmpID stored in Title. Other fields kept as display names (new list, no field_N renaming).
+const _SP_WRITE_MAP_PWDRESET = {
+    "EmpID":       "Title",
+    "EmpName":     "EmpName",
+    "Branch":      "Branch",
+    "Reason":      "Reason",
+    "RequestedAt": "RequestedAt",
+    "Status":      "Status"
+};
+
 function _getWriteMap(listName) {
-    if (listName === "GU_Branches")      return _SP_WRITE_MAP_BRANCHES;
-    if (listName === "GU_Settings")      return _SP_WRITE_MAP_SETTINGS;
-    if (listName === "GU_BranchJourney") return _SP_WRITE_MAP_BRANCHJOURNEY;
-    if (listName === "GU_Admins")        return _SP_WRITE_MAP_ADMINS;
-    if (listName === "GU_SignedDocs")    return _SP_WRITE_MAP_SIGNEDDOCS;
+    if (listName === "GU_Branches")          return _SP_WRITE_MAP_BRANCHES;
+    if (listName === "GU_Settings")          return _SP_WRITE_MAP_SETTINGS;
+    if (listName === "GU_BranchJourney")     return _SP_WRITE_MAP_BRANCHJOURNEY;
+    if (listName === "GU_Admins")            return _SP_WRITE_MAP_ADMINS;
+    if (listName === "GU_SignedDocs")        return _SP_WRITE_MAP_SIGNEDDOCS;
+    if (listName === "GU_PwdResetRequests")  return _SP_WRITE_MAP_PWDRESET;
     return {};
 }
 
@@ -2989,6 +3038,134 @@ function clearSigningSource() {
     currentSigningSource = null;
     updateFinalizeButtonForSource();
 }
+
+// ══════════════════════════════════════════════════════
+//  FORGOT PASSWORD — Request Reset Flow
+// ══════════════════════════════════════════════════════
+
+function openForgotPasswordModal() {
+    // Pre-fill employee info if known
+    const empId = (document.getElementById("loginEmpId") || {}).value || "";
+    const display = document.getElementById("forgotPwdEmpDisplay");
+    if (display) display.textContent = empId ? `Employee: ${empId}` : "Employee: (enter your Employee ID on the login screen first)";
+    document.getElementById("forgotPwdReason").value = "";
+    document.getElementById("forgotPwdError").style.display = "none";
+    document.getElementById("forgotPwdContent").style.display = "block";
+    document.getElementById("forgotPwdSuccess").style.display = "none";
+    document.getElementById("forgotPwdModal").style.display = "flex";
+}
+
+function closeForgotPasswordModal() {
+    document.getElementById("forgotPwdModal").style.display = "none";
+}
+
+async function submitForgotPasswordRequest() {
+    const empIdEl  = document.getElementById("loginEmpId");
+    const empId    = (empIdEl ? empIdEl.value : "").trim();
+    const reason   = document.getElementById("forgotPwdReason").value.trim();
+    const errEl    = document.getElementById("forgotPwdError");
+
+    if (!reason) {
+        errEl.textContent = "Please describe why you need a password reset.";
+        errEl.style.display = "block";
+        return;
+    }
+    errEl.style.display = "none";
+
+    const submitBtn = document.querySelector("#forgotPwdContent button");
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Submitting…"; }
+
+    try {
+        // 1. Look up branch details from SharePoint (if empId known)
+        let branchName = "—", empName = "—", branchEmail = "—";
+        if (empId) {
+            try {
+                const item = await _spFind("GU_Branches", "EmpID", empId);
+                if (item) {
+                    branchName  = item.Branch    || "—";
+                    empName     = item.EmpName   || "—";
+                    branchEmail = item.BranchEmail || "—";
+                }
+            } catch(e) { /* non-fatal — continue */ }
+        }
+
+        // 2. Log request to GU_PwdResetRequests SharePoint list
+        //    (List must exist with columns: Title, EmpID, EmpName, Branch, Reason, RequestedAt, Status)
+        try {
+            await _spPost("GU_PwdResetRequests", {
+                Title:       empId || "UNKNOWN",
+                EmpID:       empId || "—",
+                EmpName:     empName,
+                Branch:      branchName,
+                Reason:      reason,
+                RequestedAt: new Date().toISOString(),
+                Status:      "PENDING"
+            });
+        } catch(e) { console.warn("Could not log to GU_PwdResetRequests:", e); /* non-fatal */ }
+
+        // 3. Send email to IT Department
+        let itEmail = "cops-analytics@godavariurban.com";
+        try {
+            const admins = await _spGetAll("GU_Admins");
+            if (admins && admins.length > 0 && admins[0].Email) itEmail = admins[0].Email.trim();
+        } catch(e) { /* use fallback */ }
+
+        const mailHTML = `
+<div style="font-family:Segoe UI,sans-serif;max-width:600px;margin:0 auto;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">
+  <div style="background:#1e3a8a;padding:24px;text-align:center;">
+    <h2 style="color:#fff;margin:0;">🏦 Godavari Urban</h2>
+    <p style="color:#93c5fd;margin:4px 0 0;">Password Reset Request — Branch Login</p>
+  </div>
+  <div style="padding:28px;">
+    <p style="font-size:1rem;color:#1e293b;">IT Department,</p>
+    <p>A branch manager has submitted a <strong>password reset request</strong> from the Internal Branch Document Authorization Tool.</p>
+    <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+      <tr style="background:#f8fafc;"><td style="padding:10px 14px;font-weight:600;color:#64748b;width:40%;">Employee ID</td><td style="padding:10px 14px;color:#1e293b;">${empId || "—"}</td></tr>
+      <tr><td style="padding:10px 14px;font-weight:600;color:#64748b;">Employee Name</td><td style="padding:10px 14px;color:#1e293b;">${empName}</td></tr>
+      <tr style="background:#f8fafc;"><td style="padding:10px 14px;font-weight:600;color:#64748b;">Branch</td><td style="padding:10px 14px;color:#1e293b;">${branchName}</td></tr>
+      <tr><td style="padding:10px 14px;font-weight:600;color:#64748b;">Branch Email</td><td style="padding:10px 14px;color:#1e293b;">${branchEmail}</td></tr>
+      <tr style="background:#f8fafc;"><td style="padding:10px 14px;font-weight:600;color:#64748b;">Requested At</td><td style="padding:10px 14px;color:#1e293b;">${new Date().toLocaleString("en-IN")}</td></tr>
+    </table>
+    <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:14px 18px;border-radius:4px;color:#92400e;margin:16px 0;">
+      <strong>Manager's Reason:</strong><br>
+      <em style="font-size:0.95rem;">${reason}</em>
+    </div>
+    <p style="background:#eff6ff;border-left:4px solid #3b82f6;padding:12px 16px;border-radius:4px;color:#1e40af;">
+      ✅ To process this request, open the <strong>IT Admin Panel → IT Tools → Password Reset Requests</strong> and click <strong>Reset Login</strong> for this branch.
+    </p>
+  </div>
+  <div style="background:#f8fafc;padding:16px;text-align:center;color:#94a3b8;font-size:0.8rem;">
+    Godavari Urban Multi-State Credit Co-Op Society Ltd. — Internal Branch Document Authorization Tool
+  </div>
+</div>`;
+
+        await fetch(`${GRAPH}/me/sendMail`, {
+            method: "POST",
+            headers: {
+                Authorization: "Bearer " + await _getSpToken(),
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: {
+                    subject: `[Password Reset Request] ${branchName} — ${empId || "Unknown"}`,
+                    body: { contentType: "HTML", content: mailHTML },
+                    toRecipients: [{ emailAddress: { address: itEmail } }]
+                },
+                saveToSentItems: false
+            })
+        });
+
+        // 4. Show success
+        document.getElementById("forgotPwdContent").style.display = "none";
+        document.getElementById("forgotPwdSuccess").style.display = "block";
+
+    } catch(e) {
+        errEl.textContent = "Failed to submit request: " + (e.message || "Unknown error");
+        errEl.style.display = "block";
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Reset Request'; }
+    }
+}
+
 
 </script>
 </body>
