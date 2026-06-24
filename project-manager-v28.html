@@ -511,96 +511,175 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); colo
 #appShell { display: none; min-height: 100vh; }
 #appShell.active { display: flex; }
 
-/* ══════════════ SIDEBAR ══════════════ */
+/* ══════════════ SIDEBAR — REDESIGNED ══════════════ */
 .sidebar {
-  width: var(--sidebar-w); background: var(--surface);
-  border-right: 1px solid var(--border); display: flex; flex-direction: column;
+  width: var(--sidebar-w);
+  background: linear-gradient(180deg, #1a1f3e 0%, #111428 50%, #0e1222 100%);
+  display: flex; flex-direction: column;
   position: fixed; top: 0; left: 0; height: 100vh; z-index: 100;
-  overflow-y: auto;
+  overflow-y: auto; overflow-x: hidden;
+  box-shadow: 4px 0 24px rgba(0,0,0,.18);
 }
+
+/* Subtle animated glow in background */
+.sidebar::before {
+  content: '';
+  position: absolute; top: -60px; left: -60px;
+  width: 220px; height: 220px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(79,110,247,.18) 0%, transparent 70%);
+  pointer-events: none; animation: sideGlow 6s ease-in-out infinite alternate;
+}
+@keyframes sideGlow {
+  from { transform: translateY(0) scale(1); opacity: .6; }
+  to   { transform: translateY(40px) scale(1.1); opacity: 1; }
+}
+
+/* Logo / Brand */
 .sidebar-logo {
-  padding: 18px 18px 16px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 11px;
-  background: linear-gradient(135deg, rgba(79,110,247,.05), rgba(139,92,246,.04));
+  padding: 20px 16px 18px;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  position: relative; z-index: 1;
 }
 .sidebar-logo-icon {
-  width: 36px; height: 36px; border-radius: 10px;
-  background: linear-gradient(135deg, var(--accent), #7c3aed);
+  width: 40px; height: 40px; border-radius: 12px;
+  background: linear-gradient(135deg, #4f6ef7, #7c3aed);
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(79,110,247,.35);
+  font-size: 20px; flex-shrink: 0;
+  box-shadow: 0 6px 18px rgba(79,110,247,.5), inset 0 1px 0 rgba(255,255,255,.2);
 }
-.sidebar-logo-text { font-size: 13.5px; font-weight: 800; color: var(--text); line-height: 1.2; }
-.sidebar-logo-sub { font-size: 10px; color: var(--accent); font-weight: 600; }
-.sidebar-section { padding: 18px 10px 6px; }
+.sidebar-logo-text {
+  font-size: 13px; font-weight: 800; color: #fff;
+  line-height: 1.2; letter-spacing: -.1px;
+}
+.sidebar-logo-sub {
+  font-size: 10px; color: rgba(79,110,247,.8);
+  font-weight: 600; margin-top: 1px; letter-spacing: .3px;
+}
+
+/* Nav Sections */
+.sidebar-section { padding: 16px 10px 4px; position: relative; z-index: 1; }
 .sidebar-section-label {
-  font-size: 9.5px; font-weight: 800; color: var(--text3);
-  letter-spacing: 1.2px; text-transform: uppercase; padding: 0 10px; margin-bottom: 6px;
+  font-size: 9px; font-weight: 800; letter-spacing: 1.5px;
+  text-transform: uppercase; padding: 0 10px; margin-bottom: 5px;
+  color: rgba(255,255,255,.28);
 }
+
+/* Nav Items */
 .nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 9px 12px; border-radius: 10px; cursor: pointer;
-  font-size: 13px; font-weight: 500; color: var(--text2);
-  transition: all .18s; user-select: none; position: relative;
-  margin-bottom: 2px;
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 12px; border-radius: 11px; cursor: pointer;
+  font-size: 13px; font-weight: 500; color: rgba(255,255,255,.55);
+  transition: all .2s cubic-bezier(.4,0,.2,1);
+  user-select: none; position: relative; margin-bottom: 2px;
+  overflow: hidden;
+}
+.nav-item::before {
+  content: ''; position: absolute; inset: 0; border-radius: 11px;
+  background: linear-gradient(90deg, rgba(79,110,247,.0), rgba(79,110,247,.0));
+  transition: background .2s;
 }
 .nav-item:hover {
-  background: var(--surface2); color: var(--text);
-  padding-left: 14px;
+  color: rgba(255,255,255,.9);
+  background: rgba(255,255,255,.07);
+  transform: translateX(2px);
 }
+.nav-item:hover::before { background: rgba(79,110,247,.08); }
+
 .nav-item.active {
-  background: linear-gradient(90deg, var(--accent-light), rgba(79,110,247,.06));
-  color: var(--accent); font-weight: 700;
-  border-left: 3px solid var(--accent);
-  padding-left: 9px;
+  background: linear-gradient(90deg, rgba(79,110,247,.25), rgba(79,110,247,.08));
+  color: #fff; font-weight: 700;
+  box-shadow: inset 3px 0 0 #4f6ef7, 0 2px 12px rgba(79,110,247,.18);
 }
-.nav-item.active .nav-icon { filter: none; }
-.nav-icon { font-size: 16px; width: 22px; text-align: center; flex-shrink: 0; }
+.nav-item.active::before { background: none; }
+
+/* Nav icon wrapper */
+.nav-icon {
+  font-size: 15px; width: 28px; height: 28px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  background: rgba(255,255,255,.06);
+  transition: background .2s, transform .2s;
+}
+.nav-item:hover .nav-icon { background: rgba(255,255,255,.12); transform: scale(1.08); }
+.nav-item.active .nav-icon {
+  background: linear-gradient(135deg, rgba(79,110,247,.5), rgba(124,58,237,.4));
+  box-shadow: 0 4px 12px rgba(79,110,247,.35);
+}
+
+/* Badge */
 .nav-badge {
   margin-left: auto;
-  background: linear-gradient(135deg, var(--accent), #7c3aed);
-  color: #fff; font-size: 10px; font-weight: 800;
-  padding: 2px 7px; border-radius: 20px; min-width: 20px; text-align: center;
-  box-shadow: 0 2px 8px rgba(79,110,247,.3);
+  background: linear-gradient(135deg, #4f6ef7, #7c3aed);
+  color: #fff; font-size: 9.5px; font-weight: 800;
+  padding: 2px 8px; border-radius: 20px; min-width: 20px; text-align: center;
+  box-shadow: 0 3px 10px rgba(79,110,247,.4);
+  letter-spacing: .3px;
 }
+
+/* Section divider line */
+.sidebar-divider {
+  height: 1px; background: rgba(255,255,255,.06);
+  margin: 6px 12px; position: relative; z-index: 1;
+}
+
+/* Footer */
 .sidebar-footer {
-  margin-top: auto; padding: 14px 12px 18px;
-  border-top: 1px solid var(--border);
+  margin-top: auto; padding: 12px 10px 16px;
+  border-top: 1px solid rgba(255,255,255,.07);
+  position: relative; z-index: 1;
 }
+
+/* User card */
 .user-card {
   display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px; border-radius: 12px;
-  background: linear-gradient(135deg, var(--accent-light), rgba(139,92,246,.07));
-  border: 1.5px solid rgba(79,110,247,.15);
-  margin-bottom: 10px;
+  padding: 10px 12px; border-radius: 12px; margin-bottom: 10px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
 }
 .user-avatar {
   width: 36px; height: 36px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent), var(--accent3));
+  background: linear-gradient(135deg, #4f6ef7, #7c3aed);
   display: flex; align-items: center; justify-content: center;
-  color: #fff; font-size: 13px; font-weight: 700; flex-shrink: 0;
-  box-shadow: 0 3px 10px rgba(79,110,247,.3);
+  color: #fff; font-size: 13px; font-weight: 800; flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(79,110,247,.4);
+  border: 2px solid rgba(255,255,255,.15);
 }
 .user-info { flex: 1; min-width: 0; }
-.user-name { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.user-role { font-size: 10px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+.user-name {
+  font-size: 12.5px; font-weight: 700; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.user-role {
+  font-size: 9.5px; color: rgba(79,110,247,.8);
+  font-weight: 700; text-transform: uppercase; letter-spacing: .6px; margin-top: 2px;
+}
+
+/* Sign Out button */
 .btn-logout {
-  width: 100%; padding: 10px; border-radius: 10px;
-  border: 2px solid rgba(239,68,68,.35);
-  background: linear-gradient(135deg, rgba(239,68,68,.06), rgba(239,68,68,.03));
-  color: var(--danger); font-family: inherit; font-size: 13px;
-  cursor: pointer; transition: all .2s; font-weight: 700;
-  display: flex; align-items: center; justify-content: center; gap: 7px;
-  letter-spacing: .2px;
+  width: 100%; padding: 10px 14px; border-radius: 10px;
+  border: 1.5px solid rgba(239,68,68,.4);
+  background: linear-gradient(135deg, rgba(239,68,68,.08), rgba(220,38,38,.04));
+  color: #f87171; font-family: inherit; font-size: 12.5px;
+  cursor: pointer; transition: all .22s; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  letter-spacing: .2px; position: relative; overflow: hidden;
 }
-.btn-logout:hover {
-  border-color: var(--danger); color: #fff;
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  box-shadow: 0 6px 18px rgba(239,68,68,.35);
-  transform: translateY(-1px);
+.btn-logout::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  opacity: 0; transition: opacity .22s;
 }
+.btn-logout span { position: relative; z-index: 1; }
+.btn-logout:hover { color: #fff; border-color: #ef4444; box-shadow: 0 6px 20px rgba(239,68,68,.35); transform: translateY(-1px); }
+.btn-logout:hover::before { opacity: 1; }
 .btn-logout:active { transform: translateY(0); box-shadow: none; }
+
+/* Dark mode overrides — sidebar is already dark so minimal changes */
+body.dark-mode .sidebar {
+  background: linear-gradient(180deg, #0d1027 0%, #090c1a 100%);
+  box-shadow: 4px 0 24px rgba(0,0,0,.4);
+}
 
 /* ══════════════ MAIN AREA ══════════════ */
 .main-area { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
@@ -1599,7 +1678,7 @@ body.dark-mode .btn-edit-proj:hover { color: #fff; }
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <img id="sidebarLogoImg" src="" alt="Godavari Urban" style="width:46px;height:42px;object-fit:contain;border-radius:10px;flex-shrink:0;background:#fff;padding:3px;border:1.5px solid rgba(255,255,255,.15);">
+      <img id="sidebarLogoImg" src="" alt="Godavari Urban" style="width:42px;height:40px;object-fit:contain;border-radius:10px;flex-shrink:0;background:rgba(255,255,255,.1);padding:4px;border:1.5px solid rgba(255,255,255,.18);">
       <div>
         <div class="sidebar-logo-text">Godavari Urban</div>
         <div class="sidebar-logo-sub">Project Suite · Nanded</div>
@@ -1618,13 +1697,15 @@ body.dark-mode .btn-edit-proj:hover { color: #fff; }
       </div>
     </div>
 
+    <div class="sidebar-divider"></div>
+
     <!-- REPORTS -->
     <div class="sidebar-section">
       <div class="sidebar-section-label">Reports</div>
       <div class="nav-item" id="nav-gantt" onclick="showView('gantt')">
         <span class="nav-icon">📅</span> Gantt Chart
       </div>
-      <div class="nav-item" id="nav-export" onclick="exportCSV()">
+      <div class="nav-item" id="nav-export" onclick="openExportCSVConfirm()">
         <span class="nav-icon">⬇️</span> Export CSV
       </div>
       <div class="nav-item" id="nav-masterreport" onclick="openMasterReportModal()" style="display:none;">
@@ -1632,12 +1713,15 @@ body.dark-mode .btn-edit-proj:hover { color: #fff; }
       </div>
     </div>
 
+    <div class="sidebar-divider"></div>
+
     <!-- ADMIN -->
     <div class="sidebar-section" id="adminNavSection" style="display:none;">
       <div class="sidebar-section-label">Admin</div>
       <div class="nav-item" id="nav-admin" onclick="showView('admin')">
         <span class="nav-icon">👥</span> People Manager
       </div>
+      <div class="sidebar-divider"></div>
     </div>
 
     <div class="sidebar-footer">
@@ -1648,7 +1732,7 @@ body.dark-mode .btn-edit-proj:hover { color: #fff; }
           <div class="user-role" id="sidebarRole">Administrator</div>
         </div>
       </div>
-      <button class="btn-logout" onclick="doLogout()">🔴 Sign Out</button>
+      <button class="btn-logout" onclick="doLogout()"><span>🔴 Sign Out</span></button>
     </div>
   </aside>
 
@@ -4588,6 +4672,25 @@ function exportCSV() {
   showToast("⬇️ CSV exported!");
 }
 
+function openExportCSVConfirm() {
+  if(currentUser && currentUser.role === "authority") { showToast("⚠️ Export not available for authority users"); return; }
+  const ps = getVisibleProjects();
+  if(!ps.length){ showToast("⚠️ No projects to export!"); return; }
+  // Update preview in modal
+  document.getElementById("csvConfirmCount").textContent = ps.length + " project" + (ps.length!==1?"s":"");
+  const today = new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});
+  document.getElementById("csvConfirmDate").textContent = today;
+  document.getElementById("csvConfirmFilename").textContent = "PowerApps_PM_" + new Date().toISOString().split("T")[0] + ".csv";
+  document.getElementById("csvConfirmOverlay").classList.add("open");
+}
+function closeExportCSVConfirm() {
+  document.getElementById("csvConfirmOverlay").classList.remove("open");
+}
+function confirmAndDownloadCSV() {
+  closeExportCSVConfirm();
+  exportCSV();
+}
+
 /* ═══════════════════════════════════════════
    PDF REPORT EXPORT
 ═══════════════════════════════════════════ */
@@ -7517,3 +7620,111 @@ function closeTargetWarnModal() {
 
 </body>
 </html>
+
+<!-- ════════════ EXPORT CSV CONFIRM MODAL ════════════ -->
+<style>
+.csv-confirm-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(10,12,35,.75); backdrop-filter: blur(10px);
+  z-index: 800; align-items: center; justify-content: center;
+}
+.csv-confirm-overlay.open { display: flex; animation: fadeUp .28s ease; }
+.csv-confirm-modal {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 24px; width: 460px; max-width: 95vw;
+  box-shadow: 0 32px 80px rgba(0,0,0,.35);
+  overflow: hidden; animation: popIn .3s cubic-bezier(.34,1.56,.64,1);
+}
+.csv-confirm-header {
+  background: linear-gradient(135deg, #064e3b, #0c4a6e);
+  padding: 24px 28px 20px;
+  display: flex; align-items: flex-start; gap: 14px;
+  position: relative; overflow: hidden;
+}
+.csv-confirm-header::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 80% 0%, rgba(16,185,129,.2) 0%, transparent 60%);
+  pointer-events: none;
+}
+.csv-confirm-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; flex-shrink: 0;
+  box-shadow: 0 8px 20px rgba(0,0,0,.2);
+}
+.csv-confirm-title { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 4px; letter-spacing: -.2px; }
+.csv-confirm-sub { font-size: 12px; color: rgba(255,255,255,.6); line-height: 1.4; }
+.csv-confirm-body { padding: 24px 28px; }
+.csv-info-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 10px; margin-bottom: 9px;
+}
+.csv-info-icon { font-size: 18px; flex-shrink: 0; width: 28px; text-align: center; }
+.csv-info-label { font-size: 10.5px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 1px; }
+.csv-info-value { font-size: 13px; font-weight: 700; color: var(--text); }
+.csv-note {
+  display: flex; align-items: flex-start; gap: 9px;
+  background: rgba(16,185,129,.07); border: 1px solid rgba(16,185,129,.2);
+  border-radius: 10px; padding: 10px 14px; margin-top: 14px;
+  font-size: 11.5px; color: var(--success); line-height: 1.5;
+}
+.csv-confirm-footer {
+  display: flex; gap: 10px; justify-content: flex-end;
+  padding: 16px 28px 22px; border-top: 1px solid var(--border);
+}
+.csv-btn-cancel {
+  padding: 10px 20px; border-radius: 10px;
+  border: 1.5px solid var(--border); background: transparent;
+  color: var(--text2); font-family: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .2s;
+}
+.csv-btn-cancel:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-light); }
+.csv-btn-download {
+  padding: 10px 24px; border-radius: 10px; border: none;
+  background: linear-gradient(135deg, #059669, #0284c7);
+  color: #fff; font-family: inherit; font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; gap: 7px;
+  box-shadow: 0 5px 16px rgba(5,150,105,.3);
+}
+.csv-btn-download:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(5,150,105,.4); }
+.csv-btn-download:active { transform: translateY(0); }
+body.dark-mode .csv-confirm-header { background: linear-gradient(135deg, #022c22, #082035); }
+body.dark-mode .csv-note { background: rgba(52,211,153,.07); border-color: rgba(52,211,153,.2); color: var(--success); }
+</style>
+
+<div class="csv-confirm-overlay" id="csvConfirmOverlay" onclick="if(event.target===this)closeExportCSVConfirm()">
+  <div class="csv-confirm-modal">
+    <div class="csv-confirm-header">
+      <div class="csv-confirm-icon">📊</div>
+      <div style="position:relative;">
+        <div class="csv-confirm-title">Export Projects to CSV</div>
+        <div class="csv-confirm-sub">Review the details below before downloading your report.</div>
+      </div>
+    </div>
+    <div class="csv-confirm-body">
+      <div class="csv-info-row">
+        <div class="csv-info-icon">📁</div>
+        <div><div class="csv-info-label">Projects Included</div><div class="csv-info-value" id="csvConfirmCount">—</div></div>
+      </div>
+      <div class="csv-info-row">
+        <div class="csv-info-icon">📅</div>
+        <div><div class="csv-info-label">Export Date</div><div class="csv-info-value" id="csvConfirmDate">—</div></div>
+      </div>
+      <div class="csv-info-row">
+        <div class="csv-info-icon">💾</div>
+        <div><div class="csv-info-label">Filename</div><div class="csv-info-value" id="csvConfirmFilename" style="font-family:monospace;font-size:12px;">—</div></div>
+      </div>
+      <div class="csv-note">
+        <span style="font-size:15px;flex-shrink:0;">✅</span>
+        <span>Includes <strong>project summaries</strong> and <strong>phase-wise checklist status</strong> — ready to open in Excel or Google Sheets.</span>
+      </div>
+    </div>
+    <div class="csv-confirm-footer">
+      <button class="csv-btn-cancel" onclick="closeExportCSVConfirm()">Cancel</button>
+      <button class="csv-btn-download" onclick="confirmAndDownloadCSV()">⬇️ Download CSV</button>
+    </div>
+  </div>
+</div>
