@@ -123,6 +123,246 @@ body.dark-mode .nc-table .nc-cat-label { color: var(--text2); }
 body.dark-mode .nc-edit-input { background: var(--surface2); border-color: var(--border); color: var(--text); }
 body.dark-mode .nc-section-title { background: var(--surface2); border-color: var(--border); color: var(--text); }
 
+/* ══════════════════════════════════════════════════════════
+   MOBILE HAMBURGER BUTTON & OVERLAY
+══════════════════════════════════════════════════════════ */
+.mobile-menu-btn {
+  display: none; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 10px;
+  border: 1.5px solid var(--border); background: var(--surface);
+  cursor: pointer; font-size: 20px; color: var(--text2);
+  flex-shrink: 0; transition: all .2s; z-index: 200;
+}
+.mobile-menu-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(10,12,30,.55); backdrop-filter: blur(4px);
+  z-index: 99; opacity: 0; transition: opacity .3s;
+}
+.sidebar-overlay.open { display: block; opacity: 1; }
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+══════════════════════════════════════════════════════════ */
+
+/* ── TABLET (≤ 1024px) ── */
+@media (max-width: 1024px) {
+  :root { --sidebar-w: 220px; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .projects-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  .chart-row { flex-direction: column; }
+  .detail-stats { grid-template-columns: repeat(2, 1fr); }
+  .mr-options-grid { grid-template-columns: 1fr; }
+  .nc-modal { width: 92vw; }
+  .deck-shell { width: 98vw; height: 92vh; }
+  .deck-top-fields { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── MOBILE (≤ 768px) ── */
+@media (max-width: 768px) {
+  /* Sidebar becomes off-canvas drawer */
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
+    z-index: 150;
+    width: 260px !important;
+  }
+  .sidebar.mobile-open { transform: translateX(0); }
+
+  /* Main area fills full width */
+  .main-area { margin-left: 0 !important; }
+
+  /* Show hamburger button */
+  .mobile-menu-btn { display: flex; }
+
+  /* Topbar mobile layout */
+  .topbar {
+    padding: 0 14px;
+    height: auto; min-height: var(--topbar-h);
+    flex-wrap: wrap; gap: 8px;
+    padding-top: 10px; padding-bottom: 10px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar-left { gap: 10px; flex: 1; min-width: 0; }
+  .topbar-right { gap: 6px; flex-wrap: wrap; }
+  .page-title { font-size: 15px; }
+  .page-subtitle { font-size: 11px; }
+
+  /* Sync pill text hidden on small screens */
+  .sync-pill span { display: none; }
+  .sync-pill { padding: 5px 8px; }
+
+  /* Dark toggle — icon only */
+  #darkToggleLabel { display: none; }
+  .dark-toggle { padding: 6px 9px; }
+
+  /* "New Project" button — compact */
+  .btn.btn-primary.btn-sm.team-only {
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+  }
+
+  /* Content area padding */
+  .content-area { padding: 14px 12px 24px; }
+
+  /* Stats row — 2 columns on mobile */
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
+  .stat-card { padding: 14px 16px; border-radius: 12px; }
+  .stat-value { font-size: 26px; }
+  .stat-icon { font-size: 18px; margin-bottom: 8px; }
+
+  /* Section header */
+  .section-header { flex-wrap: wrap; gap: 8px; }
+  .section-actions { flex-wrap: wrap; }
+
+  /* Project cards — full width on mobile */
+  .projects-grid { grid-template-columns: 1fr; gap: 12px; }
+  .project-card { padding: 16px; border-radius: 14px; }
+  .card-name { font-size: 15px; }
+
+  /* Detail view */
+  .detail-header { padding: 18px 16px; }
+  .detail-top { flex-direction: column; gap: 12px; }
+  .detail-stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .detail-name { font-size: 20px; }
+
+  /* Charts */
+  .chart-row { flex-direction: column; gap: 14px; }
+  .chart-card { width: 100% !important; }
+  .donut-wrap { flex-direction: column; align-items: center; }
+
+  /* Modal — nearly full screen */
+  .modal { width: 96vw !important; padding: 22px 18px; border-radius: 16px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-grid .full { grid-column: 1; }
+  .modal-title { font-size: 18px; }
+
+  /* Edit project modal */
+  .edit-proj-modal { padding: 22px 16px; border-radius: 16px; }
+  .ep-form-grid { grid-template-columns: 1fr; }
+  .ep-field.full { grid-column: 1; }
+  .edit-proj-title { font-size: 18px; }
+
+  /* Gantt — scrollable container */
+  .gantt-wrap { padding: 14px 10px; border-radius: 14px; }
+  .gantt-title-row { flex-wrap: wrap; gap: 8px; }
+
+  /* Phase gantt */
+  .phase-gantt-wrap { padding: 14px 10px; }
+
+  /* Big progress */
+  .big-progress { padding: 16px 14px; }
+  .big-progress-pct { font-size: 22px; }
+
+  /* Phase blocks */
+  .phase-header { padding: 12px 14px; }
+  .checklist-item { padding: 10px 14px; gap: 10px; }
+
+  /* Login — stack vertically */
+  .login-wrap { flex-direction: column; width: 96vw; max-width: 420px; border-radius: 20px; }
+  .login-left { width: 100%; padding: 28px 24px 20px; }
+  .login-right { padding: 24px 24px 28px; }
+  .login-headline { font-size: 26px; }
+
+  /* NC checklist modal */
+  .nc-modal { width: 97vw; max-height: 95vh; border-radius: 16px; }
+  .nc-header { padding: 14px 16px 12px; border-radius: 16px 16px 0 0; }
+  .nc-header-top { flex-wrap: wrap; gap: 8px; }
+  .nc-meta-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .nc-progress-ring { margin-left: 0; }
+  .nc-body { padding: 12px 12px 16px; }
+  .nc-toolbar { padding: 10px 12px; gap: 8px; }
+  .nc-toolbar-left { flex-wrap: wrap; gap: 6px; }
+  .nc-toolbar-right { flex-wrap: wrap; gap: 6px; }
+  .nc-table { font-size: 12px; }
+  .nc-table thead th { padding: 8px 8px; font-size: 10px; }
+  .nc-table tbody td { padding: 6px 8px; font-size: 12px; }
+
+  /* Master report modal */
+  .mr-modal { width: 97vw; max-height: 95vh; border-radius: 16px; }
+  .mr-header { padding: 18px 18px 14px; }
+  .mr-body { padding: 16px 16px; }
+  .mr-options-grid { grid-template-columns: 1fr; gap: 10px; }
+  .mr-footer { padding: 14px 16px; flex-wrap: wrap; gap: 8px; }
+  .mr-filter-row { flex-wrap: wrap; }
+
+  /* Target warning modal */
+  .target-warn-modal { border-radius: 16px; }
+  .target-warn-head { padding: 18px 18px 14px; border-radius: 16px 16px 0 0; }
+  .target-warn-body { padding: 14px 16px; }
+  .target-warn-footer { padding: 12px 16px; }
+
+  /* CSV confirm modal */
+  .csv-confirm-modal { border-radius: 16px; }
+  .csv-confirm-header { padding: 18px 18px 14px; }
+  .csv-confirm-body { padding: 16px 18px; }
+  .csv-confirm-footer { padding: 12px 18px 18px; flex-wrap: wrap; }
+
+  /* Deck modal (Gantt editor) */
+  .deck-modal { padding: 6px; }
+  .deck-shell { width: 100vw; height: 100dvh; border-radius: 12px; }
+  .deck-head { padding: 12px 14px; flex-wrap: wrap; gap: 8px; }
+  .deck-title { font-size: 15px; }
+  .deck-actions { flex-wrap: wrap; gap: 6px; }
+  .deck-top-fields { grid-template-columns: 1fr; }
+  .deck-body { padding: 10px 10px 14px; }
+
+  /* Meeting / notes / docs modals */
+  .meeting-modal, .notes-modal, .docs-modal {
+    width: 97vw !important; max-height: 95vh !important;
+    border-radius: 16px !important;
+  }
+
+  /* People table — scrollable */
+  .people-table-wrap { overflow-x: auto; }
+
+  /* Admin cards */
+  .admin-grid { grid-template-columns: 1fr !important; }
+  .admin-card { border-radius: 14px; }
+
+  /* Add person form */
+  .add-person-form { border-radius: 14px; }
+  .add-person-form .form-grid { grid-template-columns: 1fr; }
+
+  /* Back link */
+  .back-link { font-size: 12px; margin-bottom: 14px; }
+
+  /* Custom checklist tools */
+  .custom-checklist-tools { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .custom-checklist-actions { width: 100%; justify-content: flex-start; }
+
+  /* Phase header right — hide mini progress on very small screens */
+  .phase-mini-progress { width: 60px; }
+
+  /* Buttons */
+  .btn { font-size: 12px; padding: 7px 14px; }
+  .btn-sm { font-size: 11px; padding: 5px 10px; }
+  .nc-btn { font-size: 11px; padding: 6px 12px; }
+
+  /* Status flow banner — wrap nicely */
+  .status-flow-banner { flex-wrap: wrap !important; gap: 4px !important; }
+
+  /* Loading screen */
+  .lc-card { padding: 28px 20px !important; width: 90vw !important; }
+  .lc-steps { flex-wrap: wrap; gap: 10px; justify-content: center; }
+}
+
+/* ── SMALL PHONES (≤ 420px) ── */
+@media (max-width: 420px) {
+  :root { --topbar-h: 56px; }
+  .stats-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-card { padding: 12px 12px; }
+  .stat-value { font-size: 22px; }
+  .stat-label { font-size: 10px; }
+  .content-area { padding: 10px 8px 20px; }
+  .topbar { padding: 8px 10px; }
+  .detail-stats { grid-template-columns: 1fr; }
+  .nc-table thead th:nth-child(3) { display: none; }  /* hide description col on tiny */
+  .phase-header-right .phase-count { display: none; }
+  .gantt-table { min-width: 520px; }
+}
+
 /* ══════════════ NAISSANCE CHECKLIST MODAL ══════════════ */
 .nc-overlay {
   display: none; position: fixed; inset: 0;
@@ -1675,6 +1915,9 @@ body.dark-mode .btn-edit-proj:hover { color: #fff; }
 <!-- ════════════ APP SHELL ════════════ -->
 <div id="appShell" style="display:none;">
 
+  <!-- MOBILE SIDEBAR OVERLAY -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
+
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
@@ -1705,10 +1948,10 @@ body.dark-mode .btn-edit-proj:hover { color: #fff; }
       <div class="nav-item" id="nav-gantt" onclick="showView('gantt')">
         <span class="nav-icon">📅</span> Gantt Chart
       </div>
-      <div class="nav-item" id="nav-export" onclick="openExportCSVConfirm()">
+      <div class="nav-item" id="nav-export" onclick="closeMobileSidebar();openExportCSVConfirm()">
         <span class="nav-icon">⬇️</span> Export CSV
       </div>
-      <div class="nav-item" id="nav-masterreport" onclick="openMasterReportModal()" style="display:none;">
+      <div class="nav-item" id="nav-masterreport" onclick="closeMobileSidebar();openMasterReportModal()" style="display:none;">
         <span class="nav-icon">📑</span> Master Report
       </div>
     </div>
@@ -1740,6 +1983,7 @@ body.dark-mode .btn-edit-proj:hover { color: #fff; }
   <div class="main-area">
     <div class="topbar">
       <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileSidebar()" aria-label="Toggle menu">☰</button>
         <div>
           <div class="page-title" id="pageTitle">Dashboard</div>
           <div class="page-subtitle" id="pageSubtitle">Overview of all projects</div>
@@ -3693,6 +3937,31 @@ function showView(id) {
   if(id === "projects") renderProjects();
   if(id === "gantt") renderMainGantt();
   if(id === "admin") renderAdminPanel();
+  // Auto-close sidebar on mobile after navigation
+  closeMobileSidebar();
+}
+
+/* ═══════════════════════════════════════════
+   MOBILE SIDEBAR TOGGLE
+═══════════════════════════════════════════ */
+function toggleMobileSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("sidebarOverlay");
+  if (!sidebar) return;
+  const isOpen = sidebar.classList.contains("mobile-open");
+  if (isOpen) {
+    sidebar.classList.remove("mobile-open");
+    overlay.classList.remove("open");
+  } else {
+    sidebar.classList.add("mobile-open");
+    overlay.classList.add("open");
+  }
+}
+function closeMobileSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("sidebarOverlay");
+  if (sidebar) sidebar.classList.remove("mobile-open");
+  if (overlay) overlay.classList.remove("open");
 }
 
 function goBack() { showView(prevView); }
