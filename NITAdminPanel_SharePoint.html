@@ -4132,6 +4132,13 @@ async function callScript(payload) {
             const { empId, reason, actKey, actKeyHash, newManager } = payload;
             const item = await spFindItem("GU_Branches", "EmpID", empId);
             if (!item) return { ok: false, msg: "Branch not found." };
+
+            // Guard: this branch has no active manager attached anymore —
+            // it was already deactivated/vacated. Block a repeat deactivation.
+            if (!String(item.EmpID || "").trim()) {
+                return { ok: false, msg: `${item.Branch || "This branch"} is already vacant — there is no active manager to deactivate.` };
+            }
+
             await spCreateItem("GU_ManagerHist", {
                 Timestamp: new Date().toISOString(),
                 Branch: item.Branch, OldEmpID: item.EmpID, OldEmpName: item.EmpName,
@@ -4143,19 +4150,28 @@ async function callScript(payload) {
             });
             const updateFields = {
                 PassHash: "", Activated: false, FirstLogin: true,
-                SignatureRevoked: true, ManagerStatus: "PENDING_ACTIVATION",
+                SignatureRevoked: true,
                 WorkstationStatus: "PENDING_FILE_SEND"
             };
             if (newManager) {
+                // Replacing with a new manager — branch stays occupied, pending their activation
                 updateFields.EmpID    = newManager.EmpID;
                 updateFields.EmpName  = newManager.EmpName;
                 updateFields.Post     = newManager.Post;
+                updateFields.ManagerStatus = "PENDING_ACTIVATION";
+            } else {
+                // Pure deactivation — vacate the branch so it frees up for reassignment
+                // and disappears from the "Deactivate Manager" dropdown.
+                updateFields.EmpID    = "";
+                updateFields.EmpName  = "";
+                updateFields.Post     = "";
+                updateFields.ManagerStatus = "VACANT";
             }
             if (actKey)     updateFields.ActKey     = actKey;
             if (actKeyHash) updateFields.ActKeyHash = actKeyHash;
             await spUpdateItem("GU_Branches", item._spId, updateFields);
             await logJourney(item.Branch, empId, item.EmpName, item.Post, item.AllowedIP,
-                "PENDING_ACTIVATION",
+                newManager ? "PENDING_ACTIVATION" : "VACANT",
                 newManager ? "MANAGER_REPLACED" : "MANAGER_DEACTIVATED",
                 reason, "IT Admin");
             return { ok: true };
