@@ -750,7 +750,7 @@
 const CLIENT_ID            = "106f2386-db75-436c-8e08-21c2ea14958e";   // ✅ Azure App Client ID
 const TENANT_ID            = "e47e4128-1c1b-4510-a440-415145dc1cde";   // ✅ Azure Tenant ID
 const SHAREPOINT_HOST      = "godavariurban.sharepoint.com";             // ✅ SharePoint host
-const SHAREPOINT_SITE_NAME = "GUMCCSLFDCOMMISTION";                      // ✅ SharePoint site name
+const SHAREPOINT_SITE_NAME = "GU-DigitalSigner-IT";                      // ✅ SharePoint site name
 // ─────────────────────────────────────────────────────────────────────────────────
 
 // ── "Pending Documents To Sign" — reads/writes the existing DIGITAL_SIGN document
@@ -903,55 +903,62 @@ async function _getLibraryDriveId(listName) {
 const _SP_TITLE_LISTS = ["GU_Branches", "GU_BranchJourney", "GU_ManagerHist", "GU_Admins"];
 
 // GU_Branches confirmed write map (code name → internal SP field name)
+// ── UPDATED for new IT-owned site (GU-DigitalSigner-IT): columns were created
+//    fresh with their final names, so internal names are now IDENTICAL to the
+//    display names (confirmed via column-formatting [$EmpID] token) — no more
+//    field_1/field_2 renaming like the old personal site had.
 const _SP_WRITE_MAP_BRANCHES = {
     "Branch":             "Title",
-    "EmpID":              "field_1",
-    "EmpName":            "field_2",
-    "Post":               "field_3",
-    "AllowedIP":          "field_4",
-    "PassHash":           "field_5",
-    "ActKeyHash":         "field_6",
-    "ActKey":             "field_7",
-    "BranchEmail":        "field_8",
-    "WorkstationStatus":  "field_9",
-    "ManagerStatus":      "field_10",
-    "AppEmailSentAt":     "field_11",
-    "AuthRequestedAt":    "field_12",
-    "AuthorizedAt":       "field_13",
-    "PrimaryEmpID":       "field_14",
-    "SignatureRevoked":   "field_15",
-    "SignatureVersion":   "field_16",
-    "SignatureRevokedAt": "field_17",
-    "FirstLogin":         "field_18",
-    "Activated":          "field_19"
+    "EmpID":              "EmpID",
+    "EmpName":            "EmpName",
+    "Post":               "Post",
+    "AllowedIP":          "AllowedIP",
+    "PassHash":           "PassHash",
+    "ActKeyHash":         "ActKeyHash",
+    "ActKey":             "ActKey",
+    "BranchEmail":        "BranchEmail",
+    "WorkstationStatus":  "WorkstationStatus",
+    "ManagerStatus":      "ManagerStatus",
+    "AppEmailSentAt":     "AppEmailSentAt",
+    "AuthRequestedAt":    "AuthRequestedAt",
+    "AuthorizedAt":       "AuthorizedAt",
+    "PrimaryEmpID":       "PrimaryEmpID",
+    "SignatureRevoked":   "SignatureRevoked",
+    "SignatureVersion":   "SignatureVersion",
+    "SignatureRevokedAt": "SignatureRevokedAt",
+    "FirstLogin":         "FirstLogin",
+    "Activated":          "Activated"
 };
 
-// GU_Settings: SettingKey is Title (first col), SettingValue is field_1
+// GU_Settings: SettingKey is Title (first col), SettingValue now maps to itself
 const _SP_WRITE_MAP_SETTINGS = {
     "SettingKey":   "Title",
-    "SettingValue": "field_1"
+    "SettingValue": "SettingValue"
 };
 
-// GU_Admins: Title (name), Email is field_1, Password is field_2
+// GU_Admins: Title (name), Email and Password now map to themselves
 const _SP_WRITE_MAP_ADMINS = {
     "Title":    "Title",
-    "Email":    "field_1",
-    "Password": "field_2"
+    "Email":    "Email",
+    "Password": "Password"
 };
 
-// GU_BranchJourney confirmed write map
-// Fields: Branch(Title), Timestamp, EmpID, EmpName, Post, AllowedIP, Status, Action, Details, ChangedBy
+// GU_BranchJourney write map
+// NOTE: this differs from NITAdminPanel's map, which uses "Timestamp":"Title"
+// instead of "Branch":"Title" — that's a pre-existing inconsistency between the
+// two files, not something introduced here. Worth checking which is actually
+// correct against your real GU_BranchJourney list before relying on writes to it.
 const _SP_WRITE_MAP_BRANCHJOURNEY = {
     "Branch":     "Title",
-    "Timestamp":  "field_1",
-    "EmpID":      "field_2",
-    "EmpName":    "field_3",
-    "Post":       "field_4",
-    "AllowedIP":  "field_5",
-    "Status":     "field_6",
-    "Action":     "field_7",
-    "Details":    "field_8",
-    "ChangedBy":  "field_9"
+    "Timestamp":  "Timestamp",
+    "EmpID":      "EmpID",
+    "EmpName":    "EmpName",
+    "Post":       "Post",
+    "AllowedIP":  "AllowedIP",
+    "Status":     "Status",
+    "Action":     "Action",
+    "Details":    "Details",
+    "ChangedBy":  "ChangedBy"
 };
 
 // GU_SignedDocs: tamper-evident record created every time a document is signed.

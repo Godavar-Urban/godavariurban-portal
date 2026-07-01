@@ -3366,7 +3366,7 @@ Fill the form on the left to preview the registration email that will be sent to
 const CLIENT_ID            = "106f2386-db75-436c-8e08-21c2ea14958e";   // ✅ Azure App Client ID
 const TENANT_ID            = "e47e4128-1c1b-4510-a440-415145dc1cde";   // ✅ Azure Tenant ID
 const SHAREPOINT_HOST      = "godavariurban.sharepoint.com";             // ✅ SharePoint host
-const SHAREPOINT_SITE_NAME = "GUMCCSLFDCOMMISTION";                      // ✅ SharePoint site name
+const SHAREPOINT_SITE_NAME = "GU-DigitalSigner-IT";                      // ✅ SharePoint site name
 const BRANCH_APP_URL       = "https://godavari-urban.github.io/godavariurban-portal/DigitalSigner_SharePoint.html"; // ✅ Branch app GitHub Pages URL
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -3530,34 +3530,38 @@ const SP_TITLE_LISTS = ["GU_Branches", "GU_ManagerHist"];
 // Using hardcoded maps avoids hitting /columns at runtime and prevents read-only
 // system fields (LinkTitle, Editor, etc.) from ever entering the payload.
 
+// ── UPDATED for new IT-owned site (GU-DigitalSigner-IT): columns were created
+//    fresh with their final names, so SharePoint kept the internal names IDENTICAL
+//    to the display names (confirmed via column-formatting [$EmpID] token) —
+//    no more field_1/field_2 renaming like the old personal site had.
 const SP_WRITE_MAP_SETTINGS = {
     "SettingKey":   "Title",       // Standard SP Title column
-    "SettingValue": "field_1"
+    "SettingValue": "SettingValue"
 };
 
 const SP_WRITE_MAP_BRANCHES = {
     "Branch":             "Title",     // SP built-in first column
-    "EmpID":              "field_1",
-    "EmpName":            "field_2",
-    "Post":               "field_3",
-    "AllowedIP":          "field_4",
-    "PassHash":           "field_5",
-    "ActKeyHash":         "field_6",
-    "ActKey":             "field_7",
-    "BranchEmail":        "field_8",
-    "WorkstationStatus":  "field_9",
-    "ManagerStatus":      "field_10",
-    "AppEmailSentAt":     "field_11",
-    "AuthRequestedAt":    "field_12",
-    "AuthorizedAt":       "field_13",
-    "PrimaryEmpID":       "field_14",
-    "SignatureRevoked":   "field_15",
-    "SignatureVersion":   "field_16",
-    "SignatureRevokedAt": "field_17",
-    "FirstLogin":         "field_18",
-    "Activated":          "field_19",
-    "ActivationReset":    "field_20",
-    "ColorTag":           "field_21"
+    "EmpID":              "EmpID",
+    "EmpName":            "EmpName",
+    "Post":               "Post",
+    "AllowedIP":          "AllowedIP",
+    "PassHash":           "PassHash",
+    "ActKeyHash":         "ActKeyHash",
+    "ActKey":             "ActKey",
+    "BranchEmail":        "BranchEmail",
+    "WorkstationStatus":  "WorkstationStatus",
+    "ManagerStatus":      "ManagerStatus",
+    "AppEmailSentAt":     "AppEmailSentAt",
+    "AuthRequestedAt":    "AuthRequestedAt",
+    "AuthorizedAt":       "AuthorizedAt",
+    "PrimaryEmpID":       "PrimaryEmpID",
+    "SignatureRevoked":   "SignatureRevoked",
+    "SignatureVersion":   "SignatureVersion",
+    "SignatureRevokedAt": "SignatureRevokedAt",
+    "FirstLogin":         "FirstLogin",
+    "Activated":          "Activated",
+    "ActivationReset":    "ActivationReset",
+    "ColorTag":           "ColorTag"
 };
 
 // NOTE: GU_BranchJourney and GU_ManagerHist field_N order not yet confirmed.
@@ -3567,15 +3571,15 @@ const SP_WRITE_MAP_BRANCHES = {
 // to get actual field_N order and hardcode below.
 const SP_WRITE_MAP_BRANCHJOURNEY = {
     "Timestamp": "Title",
-    "Branch":    "field_1",
-    "EmpID":     "field_2",
-    "EmpName":   "field_3",
-    "Post":      "field_4",
-    "AllowedIP": "field_5",
-    "Status":    "field_6",
-    "Action":    "field_7",
-    "Details":   "field_8",
-    "ChangedBy": "field_9"
+    "Branch":    "Branch",
+    "EmpID":     "EmpID",
+    "EmpName":   "EmpName",
+    "Post":      "Post",
+    "AllowedIP": "AllowedIP",
+    "Status":    "Status",
+    "Action":    "Action",
+    "Details":   "Details",
+    "ChangedBy": "ChangedBy"
 };
 
 const SP_WRITE_MAP_MANAGERHIST = {
@@ -3587,8 +3591,8 @@ const SP_WRITE_MAP_MANAGERHIST = {
 // Only used for reading — we never write to this list from the app.
 const SP_READ_MAP_ADMINS = {
     "Title":   "AdminName",   // SP built-in — not used but mapped for safety
-    "field_1": "Email",
-    "field_2": "Password"
+    "Email":   "Email",
+    "Password": "Password"
 };
 
 // GU_SignedDocs: created by the branch Digital Signer tool every time a document
